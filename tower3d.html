@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+    <title>3D铁塔</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script type="text/javascript" src="three.js"></script>
+    <script type="text/javascript" src="jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="TrackballControls.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="WebGL-output">
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        var clock = new THREE.Clock();
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+
+        var webGLRenderer = new THREE.WebGLRenderer();
+        webGLRenderer.setClearColorHex(0xffffff, 1.0);
+        webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+        webGLRenderer.shadowMapEnabled = true;
+
+        camera.position.x = 0;
+        camera.position.y = 0;
+        camera.position.z = 100;
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+
+        var trackballControls = new THREE.TrackballControls(camera);
+
+        trackballControls.rotateSpeed = 2.0;
+        trackballControls.zoomSpeed = 2.0;
+        trackballControls.panSpeed = 2.0;
+//        trackballControls.noZoom=false;
+//        trackballControls.noPan=false;
+        trackballControls.staticMoving = true;
+//        trackballControls.dynamicDampingFactor=0.3;
+
+        var ambientLight = new THREE.AmbientLight(0x383838);
+        scene.add(ambientLight);
+
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(300, 300, 300);
+        spotLight.intensity = 1;
+        scene.add(spotLight);
+
+        $("#WebGL-output").append(webGLRenderer.domElement);
+
+        var mesh;
+        var loader = new THREE.JSONLoader();
+        loader.load('tower.js', function (geometry, mat) {
+            mesh = new THREE.Mesh(geometry, mat[0]);
+            mesh.position.y = -32;
+            scene.add(mesh);
+        }, '');
+
+        render();
+
+
+        function render() {
+            var delta = clock.getDelta();
+
+            if (mesh) {
+                //   mesh.rotation.y+=0.006;
+            }
+
+            trackballControls.update(delta);
+            requestAnimationFrame(render);
+            webGLRenderer.render(scene, camera)
+        }
+
+    });
+</script>
+</body>
+</html>
